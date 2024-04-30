@@ -2,6 +2,18 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
     protected ArrayList<Integer> subtaskIds = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Epic{" +
+                "subtaskIds=" + subtaskIds +
+                ", taskName='" + taskName + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
+    }
+
     public Epic(String taskName, String description, int id, Status status) {
         super (taskName, description, id, status);
     }
