@@ -1,9 +1,19 @@
+package models;
+
 public class Subtask extends Task {
     protected int epicId;
 
+    public int getEpicId() {
+        return epicId;
+    }
+
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
+    }
+
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "models.Subtask{" +
                 "epicId=" + epicId +
                 ", taskName='" + taskName + '\'' +
                 ", description='" + description + '\'' +
