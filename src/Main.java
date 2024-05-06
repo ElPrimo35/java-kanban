@@ -17,7 +17,7 @@ public class Main {
                 1,
                 Status.NEW
         );
-        taskManager.createTask(firstTask);
+        int firstTaskId = taskManager.createTask(firstTask);
 
 
         Task secondTask = new Task(
@@ -26,7 +26,8 @@ public class Main {
                 1,
                 Status.NEW
         );
-        taskManager.createTask(secondTask);
+        int secondTaskId = taskManager.createTask(secondTask);
+
 
 
         Epic firstEpic = new Epic(
@@ -35,16 +36,16 @@ public class Main {
                 -1,
                 Status.NEW
         );
-        taskManager.createEpic(firstEpic);
+        int firstEpicId = taskManager.createEpic(firstEpic);
 
         Subtask firstSubtask = new Subtask(
                 "Сдать ТЗ4",
                 "Сделать тесты",
                 3,
                 Status.NEW,
-                3
+                firstEpicId
         );
-        taskManager.createSubtask(firstSubtask);
+        int firstSubtaskId = taskManager.createSubtask(firstSubtask);
 
 
 
@@ -53,9 +54,9 @@ public class Main {
                 "Сдать все остальные ТЗ",
                 3,
                 Status.NEW,
-                1
+                firstEpicId
         );
-        taskManager.createSubtask(secondSubtask);
+        int secondSubtaskId = taskManager.createSubtask(secondSubtask);
 
 
         Epic secondEpic = new Epic(
@@ -64,7 +65,7 @@ public class Main {
                 -1,
                 Status.NEW
         );
-        taskManager.createEpic(secondEpic);
+        int secondEpicId = taskManager.createEpic(secondEpic);
 
 
         Subtask thirdSubtask = new Subtask(
@@ -72,33 +73,30 @@ public class Main {
                 "Сдать все остальные ТЗ",
                 6,
                 Status.NEW,
-                1
+                secondEpicId
         );
-        taskManager.createSubtask(thirdSubtask);
+        int thirdSubtaskId = taskManager.createSubtask(thirdSubtask);
 
 
         Subtask updateThirdSubtask = new Subtask(
                 "Сдать дипломный проект",
                 "Сдать все остальные ТЗ",
-                3,
+                thirdSubtaskId,
                 Status.DONE,
-                1
+                secondEpicId
         );
         taskManager.updateSubtask(updateThirdSubtask);
 
+        taskManager.deleteTaskById(firstTaskId);
+        taskManager.deleteEpicById(firstEpicId);
 
 
-        System.out.println(firstTask);
-        System.out.println(secondTask);
-        System.out.println(firstEpic);
-        System.out.println(firstSubtask);
-        System.out.println(secondSubtask);
-        System.out.println(secondEpic);
-        System.out.println(thirdSubtask);
-        System.out.println(updateThirdSubtask);
-        System.out.println(secondEpic);
-
-
-
+        System.out.println(taskManager.getTaskById(firstTaskId));
+        System.out.println(taskManager.getTaskById(secondTaskId));
+        System.out.println(taskManager.getEpicById(firstEpicId));
+        System.out.println(taskManager.getSubtaskById(firstSubtaskId));
+        System.out.println(taskManager.getSubtaskById(secondSubtaskId));
+        System.out.println(taskManager.getEpicById(secondEpicId));
+        System.out.println(taskManager.getSubtaskById(thirdSubtaskId));
     }
 }

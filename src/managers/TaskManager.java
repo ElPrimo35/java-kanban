@@ -77,21 +77,25 @@ public class TaskManager {
     }
 
     public void updateEpic(Epic epic) {
+
+
         if (epics.containsKey(epic.getId())) {
-            epics.put(epic.getId(), epic);
+            Epic savedEpic = epics.get(epic.getId());
+            savedEpic.setTaskName(epic.getTaskName());
+            savedEpic.setDescription(epic.getDescription());
         }
     }
 
-    public void createSubtask(Subtask subtask) {
-
-        subtask.setId(nextId);
-        nextId++;
+    public int createSubtask(Subtask subtask) {
 
         if (epics.containsKey(subtask.getEpicId())) {
+            subtask.setId(nextId);
+            nextId++;
             epics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
             subtasks.put(subtask.getId(), subtask);
             changeEpicStatus(epics.get(subtask.getEpicId()));
         }
+        return subtask.getId();
     }
 
     public void updateSubtask(Subtask subtask) {
@@ -107,13 +111,12 @@ public class TaskManager {
 
     public void deleteAllSubtasks() {
 
-        for (Subtask subtask : subtasks.values()) {
-            epics.get(subtask.getEpicId()).getSubtaskIds().clear();
-        }
         subtasks.clear();
         for (Epic epic : epics.values()) {
+            epic.getSubtaskIds().clear();
             epic.setStatus(Status.NEW);
         }
+
     }
 
     public void deleteAllEpics() {
@@ -138,17 +141,19 @@ public class TaskManager {
     }
 
     public void deleteSubtaskById (int subtaskId) {
-        epics.get(subtasks.get(subtaskId).getEpicId()).getSubtaskIds().remove(subtaskId);
-        subtasks.remove(subtaskId);
-        changeEpicStatus(epics.get(subtasks.get(subtaskId).getEpicId()));
+
+        if(subtasks.containsKey(subtaskId)) {
+            epics.get(subtasks.get(subtaskId).getEpicId()).getSubtaskIds().remove(Integer.valueOf(subtaskId));
+            subtasks.remove(subtaskId);
+            changeEpicStatus(epics.get(subtasks.get(subtaskId).getEpicId()));
+        }
+
     }
 
     public void deleteEpicById (int epicId) {
 
-        for (Subtask subtask : subtasks.values()) {
-            if (epics.get(epicId).getSubtaskIds().contains(subtask.getId())) {
-                subtasks.remove(subtask.getId());
-            }
+        for (Integer subtaskId : epics.get(epicId).getSubtaskIds()) {
+            subtasks.remove(subtaskId);
         }
         epics.remove(epicId);
     }
