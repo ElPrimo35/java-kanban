@@ -1,15 +1,15 @@
-import managers.TaskManager;
+import managers.InMemoryTaskManager;
 import models.Epic;
 import models.Status;
 import models.Subtask;
 import models.Task;
 
-import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager taskManager = new TaskManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+
 
         Task firstTask = new Task(
                 "Уборка",
@@ -87,16 +87,29 @@ public class Main {
         );
         taskManager.updateSubtask(updateThirdSubtask);
 
-        taskManager.deleteTaskById(firstTaskId);
-        taskManager.deleteEpicById(firstEpicId);
+
+        System.out.println(taskManager.getHistory());
 
 
         System.out.println(taskManager.getTaskById(firstTaskId));
         System.out.println(taskManager.getTaskById(secondTaskId));
         System.out.println(taskManager.getEpicById(firstEpicId));
         System.out.println(taskManager.getSubtaskById(firstSubtaskId));
+
+        System.out.println(taskManager.getHistory());
+
         System.out.println(taskManager.getSubtaskById(secondSubtaskId));
         System.out.println(taskManager.getEpicById(secondEpicId));
         System.out.println(taskManager.getSubtaskById(thirdSubtaskId));
+
+
+        System.out.println(taskManager.getHistory());
+
+        taskManager.getEpicById(3);
+        taskManager.getSubtaskById(4);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(1);
+
+        System.out.println(taskManager.getHistory());
     }
 }
