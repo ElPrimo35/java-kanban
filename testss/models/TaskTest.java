@@ -1,7 +1,5 @@
-package Tests;
+package models;
 
-import models.Status;
-import models.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,9 @@
-package Tests;
-import managers.TaskManager;
+package managers;
+
 import models.Subtask;
 import models.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import managers.InMemoryTaskManager;
 import models.Epic;
 import models.Status;
 

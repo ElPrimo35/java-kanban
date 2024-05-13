@@ -1,7 +1,5 @@
-package Tests;
+package models;
 
-import models.Epic;
-import models.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
