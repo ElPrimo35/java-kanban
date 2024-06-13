@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 public class SubtaskTest {
 
     InMemoryTaskManager taskManager = new InMemoryTaskManager();
+
     @Test
     void shouldBeEquals() {
         Epic firstEpic = new Epic(

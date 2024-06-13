@@ -8,7 +8,6 @@ public class Subtask extends Task {
     }
 
 
-
     @Override
     public String toString() {
         return "models.Subtask{" +
@@ -21,7 +20,7 @@ public class Subtask extends Task {
     }
 
     public Subtask(String taskName, String description, int id, Status status, int epicId) {
-        super (taskName, description, id, status);
+        super(taskName, description, id, status);
         this.epicId = epicId;
     }
 }

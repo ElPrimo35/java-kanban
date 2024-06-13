@@ -32,11 +32,11 @@ public interface TaskManager {
 
     Epic getEpicById(int epicId);
 
-    void deleteTaskById (int taskId);
+    void deleteTaskById(int taskId);
 
-    void deleteSubtaskById (int subtaskId);
+    void deleteSubtaskById(int subtaskId);
 
-    void deleteEpicById (int epicId);
+    void deleteEpicById(int epicId);
 
     List<Task> getTaskList();
 

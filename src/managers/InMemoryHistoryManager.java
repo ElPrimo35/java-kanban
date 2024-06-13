@@ -16,6 +16,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyList.addAll(getTasks());
         return historyList;
     }
+
     @Override
     public void addTask(Task task) {
         if (task == null) return;
@@ -33,6 +34,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
     }
+
     Node<Task> head;
     Node<Task> tail;
 
@@ -48,6 +50,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             historyMap.put(task.getId(), tail);
         }
     }
+
     public List<Task> getTasks() {
         List<Task> history = new ArrayList<>();
         Node<Task> currentNode = head;

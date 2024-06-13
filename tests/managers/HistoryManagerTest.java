@@ -122,7 +122,6 @@ public class HistoryManagerTest {
         int subtaskId = taskManager.createSubtask(subtask);
 
 
-
         InMemoryHistoryManager history = new InMemoryHistoryManager();
 
         history.addTask(firstTask);

@@ -23,6 +23,6 @@ public class Epic extends Task {
     }
 
     public Epic(String taskName, String description, int id, Status status) {
-        super (taskName, description, id, status);
+        super(taskName, description, id, status);
     }
 }
