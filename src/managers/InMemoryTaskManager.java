@@ -184,7 +184,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public  List<Task> getTaskList() {
+    public List<Task> getTaskList() {
         return new ArrayList<Task>(tasks.values());
     }
 
@@ -210,6 +210,21 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    public void removeTaskFromHistory(int taskId) {
+        historyManager.remove(taskId);
+    }
+
+    public void removeSubtaskFromHistory(int subtaskId) {
+        historyManager.remove(subtaskId);
+    }
+
+    public void removeEpicFromHistory(int epicId) {
+        for (Integer subtaskId : epics.get(epicId).getSubtaskIds()) {
+            historyManager.remove(subtaskId);
+        }
+        historyManager.remove(epicId);
     }
 }
 

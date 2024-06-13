@@ -9,111 +9,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-//
-//
-//        Task firstTask = new Task(
-//                "Уборка",
-//                "Убраться в доме",
-//                1,
-//                Status.NEW
-//        );
-//        int firstTaskId = taskManager.createTask(firstTask);
-//
-//
-//        Task secondTask = new Task(
-//                "Сходить погулять",
-//                "Прийти в центр города",
-//                1,
-//                Status.NEW
-//        );
-//        int secondTaskId = taskManager.createTask(secondTask);
-//
-//
-//
-//        Epic firstEpic = new Epic(
-//                "Выучить джаву",
-//                "Пройти курс от яндекса",
-//                -1,
-//                Status.NEW
-//        );
-//        int firstEpicId = taskManager.createEpic(firstEpic);
-//
-//        Subtask firstSubtask = new Subtask(
-//                "Сдать ТЗ4",
-//                "Сделать тесты",
-//                3,
-//                Status.NEW,
-//                firstEpicId
-//        );
-//        int firstSubtaskId = taskManager.createSubtask(firstSubtask);
-//
-//
-//
-//        Subtask secondSubtask = new Subtask(
-//                "Сдать дипломный проект",
-//                "Сдать все остальные ТЗ",
-//                3,
-//                Status.NEW,
-//                firstEpicId
-//        );
-//        int secondSubtaskId = taskManager.createSubtask(secondSubtask);
-//
-//
-//        Epic secondEpic = new Epic(
-//                "Помыть посуду",
-//                "собраться с силами и встать с кровати",
-//                -1,
-//                Status.NEW
-//        );
-//        int secondEpicId = taskManager.createEpic(secondEpic);
-//
-//
-//        Subtask thirdSubtask = new Subtask(
-//                "Сдать дипломный проект",
-//                "Сдать все остальные ТЗ",
-//                6,
-//                Status.NEW,
-//                secondEpicId
-//        );
-//        int thirdSubtaskId = taskManager.createSubtask(thirdSubtask);
-//
-//
-//        Subtask updateThirdSubtask = new Subtask(
-//                "Сдать дипломный проект",
-//                "Сдать все остальные ТЗ",
-//                thirdSubtaskId,
-//                Status.DONE,
-//                secondEpicId
-//        );
-//        taskManager.updateSubtask(updateThirdSubtask);
-//
-//
-//        System.out.println(taskManager.getHistory());
-//
-//
-//        System.out.println(taskManager.getTaskById(firstTaskId));
-//        System.out.println(taskManager.getTaskById(secondTaskId));
-//        System.out.println(taskManager.getEpicById(firstEpicId));
-//        System.out.println(taskManager.getSubtaskById(firstSubtaskId));
-//
-//        System.out.println(taskManager.getHistory());
-//
-//        System.out.println(taskManager.getSubtaskById(secondSubtaskId));
-//        System.out.println(taskManager.getEpicById(secondEpicId));
-//        System.out.println(taskManager.getSubtaskById(thirdSubtaskId));
-//
-//
-//        System.out.println(taskManager.getHistory());
-//
-//        taskManager.getEpicById(3);
-//        taskManager.getSubtaskById(4);
-//        taskManager.getTaskById(1);
-//        taskManager.getTaskById(1);
-//
-//        System.out.println(taskManager.getHistory());
+
 
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
+
 
 
 
@@ -180,34 +79,19 @@ public class Main {
         int secondEpicId = taskManager.createEpic(epic1);
 
 
-
-
         taskManager.getSubtaskById(subtaskId);
         taskManager.getHistory();
-        subtask.setStatus(Status.DONE);
+        taskManager.getTaskById(firstTaskId);
         taskManager.getHistory();
-//        history.getTasks();
-//        taskManager.getTaskById(firstTaskId);
-//        history.getHistory();
-//        history.getTasks();
-//        taskManager.getSubtaskById(subtask1Id);
-//        history.getHistory();
-//        history.getTasks();
-//        taskManager.getTaskById(firstTaskId);
-//        history.getHistory();
-//        history.getTasks();
-//        taskManager.getEpicById(firstEpicId);
-//        history.getHistory();
-//        history.getTasks();
-//        taskManager.getEpicById(firstEpicId);
-//        history.getHistory();
-//        history.getTasks();
-//
-
-
-
-
-//        history.getHistory();
-//        history.getTasks();
+        taskManager.getTaskById(firstTaskId);
+        taskManager.getHistory();
+        taskManager.getEpicById(firstEpicId);
+        taskManager.getHistory();
+        taskManager.getSubtaskById(subtaskId);
+        taskManager.getSubtaskById(subtask1Id);
+        taskManager.getSubtaskById(subtask2Id);
+        taskManager.getHistory();
+        taskManager.removeEpicFromHistory(firstEpicId);
+        taskManager.getHistory();
     }
 }
