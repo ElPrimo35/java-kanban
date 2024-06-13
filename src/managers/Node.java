@@ -1,7 +1,5 @@
 package managers;
 
-import java.util.Objects;
-
 public class Node<T> {
     T data;
     Node<T> prev;
