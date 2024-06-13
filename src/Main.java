@@ -81,6 +81,7 @@ public class Main {
 
         taskManager.getSubtaskById(subtaskId);
         taskManager.getHistory();
+
         taskManager.getTaskById(firstTaskId);
         taskManager.getHistory();
         taskManager.getTaskById(firstTaskId);
