@@ -16,43 +16,43 @@ public class Main {
         Task firstTask = new Task("Уборка", "Убраться в доме", 1, Status.NEW);
         int firstTaskId = taskManager.createTask(firstTask);
 
-
         Task secondTask = new Task("Сходить погулять", "Прийти в центр города", 2, Status.NEW);
         int secondTaskId = taskManager.createTask(secondTask);
 
-        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW
-
-
-        );
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
         int firstEpicId = taskManager.createEpic(epic);
 
         Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
-        int subtaskId = taskManager.createSubtask(subtask);
+        int firstSubtaskId = taskManager.createSubtask(subtask);
 
         Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
-        int subtask1Id = taskManager.createSubtask(subtask1);
+        int secondSubtaskId = taskManager.createSubtask(subtask1);
 
         Subtask subtask2 = new Subtask("Сдать ТЗ6", "Сделать тесты", 3, Status.NEW, epic.getId());
-        int subtask2Id = taskManager.createSubtask(subtask2);
+        int thirdSubtaskId = taskManager.createSubtask(subtask2);
 
         Epic epic1 = new Epic("Сдать все зачёты", "подготовиться к ним", -1, Status.NEW);
         int secondEpicId = taskManager.createEpic(epic1);
 
+        Subtask subtask3 = new Subtask("Сдать ТЗ7", "Сделать тесты", 3, Status.NEW, epic1.getId());
+        int fourthSubtaskId = taskManager.createSubtask(subtask3);
 
-        taskManager.getSubtaskById(subtaskId);
-        taskManager.getHistory();
 
         taskManager.getTaskById(firstTaskId);
-        taskManager.getHistory();
+        taskManager.getTaskById(secondTaskId);
         taskManager.getTaskById(firstTaskId);
-        taskManager.getHistory();
+        System.out.println(taskManager.getHistory());
+        taskManager.deleteAllTasks();
+        System.out.println(taskManager.getHistory());
+
         taskManager.getEpicById(firstEpicId);
-        taskManager.getHistory();
-        taskManager.getSubtaskById(subtaskId);
-        taskManager.getSubtaskById(subtask1Id);
-        taskManager.getSubtaskById(subtask2Id);
-        taskManager.getHistory();
-        taskManager.removeEpicFromHistory(firstEpicId);
-        taskManager.getHistory();
+        taskManager.getSubtaskById(firstSubtaskId);
+        taskManager.getSubtaskById(secondSubtaskId);
+        taskManager.getSubtaskById(thirdSubtaskId);
+        taskManager.getEpicById(secondEpicId);
+        taskManager.getSubtaskById(fourthSubtaskId);
+        System.out.println(taskManager.getHistory());
+        taskManager.deleteAllEpics();
+        System.out.println(taskManager.getHistory());
     }
 }

@@ -140,6 +140,158 @@ public class HistoryManagerTest {
         tasks.add(subtask);
 
         Assertions.assertEquals(tasks, history.getHistory());
+    }
 
+    @Test
+    void shouldDeleteTaskFromHistory() {
+        List<Task> tasks = new ArrayList<>();
+        TaskManager taskManager = Managers.getDefault();
+
+        Task firstTask = new Task("Уборка", "Убраться в доме", 1, Status.NEW);
+        int firstTaskId = taskManager.createTask(firstTask);
+
+        Task secondTask = new Task("Сходить погулять", "Прийти в центр города", 2, Status.NEW);
+        int secondTaskId = taskManager.createTask(secondTask);
+
+        taskManager.getTaskById(firstTaskId);
+        taskManager.getTaskById(secondTaskId);
+        taskManager.deleteTaskById(firstTaskId);
+
+        tasks.add(secondTask);
+
+        Assertions.assertEquals(tasks, taskManager.getHistory());
+    }
+
+    @Test
+    void shouldDeleteAllTasksFromHistory() {
+        List<Task> tasks = new ArrayList<>();
+        TaskManager taskManager = Managers.getDefault();
+
+        Task firstTask = new Task("Уборка", "Убраться в доме", 1, Status.NEW);
+        int firstTaskId = taskManager.createTask(firstTask);
+
+        Task secondTask = new Task("Сходить погулять", "Прийти в центр города", 2, Status.NEW);
+        int secondTaskId = taskManager.createTask(secondTask);
+
+        taskManager.getTaskById(firstTaskId);
+        taskManager.getTaskById(secondTaskId);
+
+        taskManager.deleteAllTasks();
+
+        Assertions.assertEquals(tasks, taskManager.getHistory());
+    }
+
+    @Test
+    void shouldDeleteSubtaskFromHistory() {
+        List<Task> tasks = new ArrayList<>();
+        TaskManager taskManager = Managers.getDefault();
+
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        int firstEpicId = taskManager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        int firstSubtaskId = taskManager.createSubtask(subtask);
+
+        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
+        int secondSubtaskId = taskManager.createSubtask(subtask1);
+
+        taskManager.getEpicById(firstEpicId);
+        taskManager.getSubtaskById(firstSubtaskId);
+        taskManager.getSubtaskById(secondSubtaskId);
+        taskManager.deleteSubtaskById(secondSubtaskId);
+
+        tasks.add(epic);
+        tasks.add(subtask);
+
+        Assertions.assertEquals(tasks, taskManager.getHistory());
+    }
+
+    @Test
+    void shouldDeleteAllSubtaskFromHistory() {
+        List<Task> tasks = new ArrayList<>();
+        TaskManager taskManager = Managers.getDefault();
+
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        int firstEpicId = taskManager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        int firstSubtaskId = taskManager.createSubtask(subtask);
+
+        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
+        int secondSubtaskId = taskManager.createSubtask(subtask1);
+
+        taskManager.getEpicById(firstEpicId);
+        taskManager.getSubtaskById(firstSubtaskId);
+        taskManager.getSubtaskById(secondSubtaskId);
+        taskManager.deleteAllSubtasks();
+
+        tasks.add(epic);
+
+        Assertions.assertEquals(tasks, taskManager.getHistory());
+    }
+
+    @Test
+    void shouldDeleteEpicFromHistory() {
+        List<Task> tasks = new ArrayList<>();
+        TaskManager taskManager = Managers.getDefault();
+
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        int firstEpicId = taskManager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        int firstSubtaskId = taskManager.createSubtask(subtask);
+
+        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
+        int secondSubtaskId = taskManager.createSubtask(subtask1);
+
+        Epic epic1 = new Epic("Сдать все зачёты", "подготовиться к ним", -1, Status.NEW);
+        int secondEpicId = taskManager.createEpic(epic1);
+
+        Subtask subtask2 = new Subtask("Сдать ТЗ7", "Сделать тесты", 3, Status.NEW, epic1.getId());
+        int thirdSubtaskId = taskManager.createSubtask(subtask2);
+
+        taskManager.getEpicById(firstEpicId);
+        taskManager.getSubtaskById(firstSubtaskId);
+        taskManager.getSubtaskById(secondSubtaskId);
+        taskManager.getEpicById(secondEpicId);
+        taskManager.getSubtaskById(thirdSubtaskId);
+
+        taskManager.deleteEpicById(firstEpicId);
+
+        tasks.add(epic1);
+        tasks.add(subtask2);
+
+        Assertions.assertEquals(tasks, taskManager.getHistory());
+    }
+
+    @Test
+    void shouldDeleteAllEpicsFromHistory() {
+        List<Task> tasks = new ArrayList<>();
+        TaskManager taskManager = Managers.getDefault();
+
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        int firstEpicId = taskManager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        int firstSubtaskId = taskManager.createSubtask(subtask);
+
+        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
+        int secondSubtaskId = taskManager.createSubtask(subtask1);
+
+        Epic epic1 = new Epic("Сдать все зачёты", "подготовиться к ним", -1, Status.NEW);
+        int secondEpicId = taskManager.createEpic(epic1);
+
+        Subtask subtask2 = new Subtask("Сдать ТЗ7", "Сделать тесты", 3, Status.NEW, epic1.getId());
+        int thirdSubtaskId = taskManager.createSubtask(subtask2);
+
+        taskManager.getEpicById(firstEpicId);
+        taskManager.getSubtaskById(firstSubtaskId);
+        taskManager.getSubtaskById(secondSubtaskId);
+        taskManager.getEpicById(secondEpicId);
+        taskManager.getSubtaskById(thirdSubtaskId);
+
+        taskManager.deleteAllEpics();
+
+        Assertions.assertEquals(tasks, taskManager.getHistory());
     }
 }
