@@ -1,4 +1,4 @@
-package managers;
+package models;
 
 public enum TaskType {
     TASK,

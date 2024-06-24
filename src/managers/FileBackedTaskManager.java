@@ -1,9 +1,7 @@
 package managers;
 
-import models.Epic;
-import models.Status;
-import models.Subtask;
-import models.Task;
+import exceptions.ManagerSaveException;
+import models.*;
 
 import java.io.*;
 
@@ -16,31 +14,43 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public String taskToString(Task task) {
-        String string;
+        StringBuilder builder = new StringBuilder();
         if (task instanceof Epic) {
-            string = task.getId() + "," +
-                    TaskType.EPIC + "," +
-                    task.getTaskName() + "," +
-                    task.getStatus() + "," +
-                    task.getDescription();
-            return string;
+            builder.append(task.getId());
+            builder.append(',');
+            builder.append(TaskType.EPIC);
+            builder.append(',');
+            builder.append(task.getTaskName());
+            builder.append(',');
+            builder.append(task.getStatus());
+            builder.append(',');
+            builder.append(task.getDescription());
+            return builder.toString();
         }
         if (task instanceof Subtask) {
-            string = task.getId() + "," +
-                    TaskType.SUBTASK + "," +
-                    task.getTaskName() + "," +
-                    task.getStatus() + "," +
-                    task.getDescription() + "," +
-                    ((Subtask) task).getEpicId();
-            return string;
+            builder.append(task.getId());
+            builder.append(',');
+            builder.append(TaskType.SUBTASK);
+            builder.append(',');
+            builder.append(task.getTaskName());
+            builder.append(',');
+            builder.append(task.getStatus());
+            builder.append(',');
+            builder.append(task.getDescription());
+            builder.append(',');
+            builder.append(((Subtask) task).getEpicId());
+            return builder.toString();
         }
-        string = task.getId() + "," +
-                TaskType.TASK + "," +
-                task.getTaskName() + "," +
-                task.getStatus() + "," +
-                task.getDescription();
-        return string;
-
+        builder.append(task.getId());
+        builder.append(',');
+        builder.append(TaskType.TASK);
+        builder.append(',');
+        builder.append(task.getTaskName());
+        builder.append(',');
+        builder.append(task.getStatus());
+        builder.append(',');
+        builder.append(task.getDescription());
+        return builder.toString();
     }
 
     public static Task fromString(String value) {
@@ -85,7 +95,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
-
+            bw.write("id,type,name,status,description,epic" + "\n");
             for (Task task : tasks.values()) {
                 String taskFile = taskToString(task);
                 bw.write(taskFile + "," + "\n");
@@ -104,22 +114,32 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) throws IOException {
+    public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file.getName());
-        FileReader reader = new FileReader(file);
-        BufferedReader br = new BufferedReader(reader);
-        while (br.ready()) {
-            String line = br.readLine();
-            Task task = fromString(line);
-            if (task instanceof Epic) {
-                fileBackedTaskManager.createEpic((Epic) task);
-                continue;
+        try {
+            FileReader reader = new FileReader(file);
+            BufferedReader br = new BufferedReader(reader);
+            br.readLine();
+            while (br.ready()) {
+                String line = br.readLine();
+                Task task = fromString(line);
+                if (task == null) {
+                    continue;
+                }
+
+                if (task instanceof Epic) {
+                    fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
+                    continue;
+                }
+                if (task instanceof Subtask) {
+                    fileBackedTaskManager.subtasks.put(task.getId(), (Subtask) task);
+                    fileBackedTaskManager.epics.get(((Subtask) task).getEpicId()).getSubtaskIds().add(task.getId());
+                    continue;
+                }
+                fileBackedTaskManager.tasks.put(task.getId(), task);
             }
-            if (task instanceof Subtask) {
-                fileBackedTaskManager.createSubtask((Subtask) task);
-                continue;
-            }
-            fileBackedTaskManager.createTask(task);
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при выгрузке файлов.", e);
         }
         return fileBackedTaskManager;
     }

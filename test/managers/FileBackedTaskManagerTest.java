@@ -37,7 +37,7 @@ public class FileBackedTaskManagerTest {
             String line = br.readLine();
             finalLine = finalLine + line;
         }
-        Assertions.assertEquals(finalLine, "1,TASK,Уборка,NEW,Убраться в доме,2,TASK,Сходить погулять,NEW,Прийти в центр города,3,EPIC,Выучить джаву,NEW,Пройти курс от яндекса,4,SUBTASK,Сдать ТЗ4,NEW,Сделать тесты,3,");
+        Assertions.assertEquals(finalLine, "id,type,name,status,description,epic1,TASK,Уборка,NEW,Убраться в доме,2,TASK,Сходить погулять,NEW,Прийти в центр города,3,EPIC,Выучить джаву,NEW,Пройти курс от яндекса,4,SUBTASK,Сдать ТЗ4,NEW,Сделать тесты,3,");
     }
 
     @Test
