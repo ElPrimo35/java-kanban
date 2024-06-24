@@ -141,6 +141,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при выгрузке файлов.", e);
         }
+        fileBackedTaskManager.nextId = fileBackedTaskManager.epics.size() + fileBackedTaskManager.subtasks.size() + fileBackedTaskManager.tasks.size();
         return fileBackedTaskManager;
     }
 

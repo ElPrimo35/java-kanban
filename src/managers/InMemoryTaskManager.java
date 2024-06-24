@@ -18,7 +18,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
-    private int nextId = 1;
+    protected int nextId = 1;
 
 
     private void changeEpicStatus(Epic epic) {
