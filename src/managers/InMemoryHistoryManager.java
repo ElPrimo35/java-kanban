@@ -6,8 +6,8 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    Node<Task> head;
-    Node<Task> tail;
+    private Node<Task> head;
+    private Node<Task> tail;
     private final Map<Integer, Node<Task>> historyMap = new HashMap<>();
 
 
@@ -58,6 +58,12 @@ public class InMemoryHistoryManager implements HistoryManager {
     private void removeNode(Node<Task> node) {
         if (node == null) return;
 
+        if (node.equals(tail) && node.equals(head)) {
+            tail = null;
+            head = null;
+            return;
+        }
+
         if (node.equals(head)) {
             head = head.next;
             if (head != null) {
@@ -70,12 +76,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail.next = null;
             return;
         }
-
-        if (node.equals(tail) && node.equals(head)) {
-            tail = null;
-            head = null;
-        }
-
 
         Node<Task> prev = node.prev;
         Node<Task> next = node.next;
