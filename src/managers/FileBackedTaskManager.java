@@ -1,5 +1,6 @@
 package managers;
 
+import exceptions.ManagerLoadException;
 import exceptions.ManagerSaveException;
 import models.*;
 
@@ -116,6 +117,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file.getName());
+        int idCounter = 0;
         try {
             FileReader reader = new FileReader(file);
             BufferedReader br = new BufferedReader(reader);
@@ -129,19 +131,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
                 if (task instanceof Epic) {
                     fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
+                    if (task.getId() > idCounter) idCounter = task.getId();
                     continue;
                 }
                 if (task instanceof Subtask) {
                     fileBackedTaskManager.subtasks.put(task.getId(), (Subtask) task);
                     fileBackedTaskManager.epics.get(((Subtask) task).getEpicId()).getSubtaskIds().add(task.getId());
+                    if (task.getId() > idCounter) idCounter = task.getId();
                     continue;
                 }
                 fileBackedTaskManager.tasks.put(task.getId(), task);
+                if (task.getId() > idCounter) idCounter = task.getId();
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при выгрузке файлов.", e);
+            throw new ManagerLoadException("Ошибка при выгрузке файлов.", e);
         }
-        fileBackedTaskManager.nextId = fileBackedTaskManager.epics.size() + fileBackedTaskManager.subtasks.size() + fileBackedTaskManager.tasks.size();
+        fileBackedTaskManager.nextId = idCounter;
         return fileBackedTaskManager;
     }
 
