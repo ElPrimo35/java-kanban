@@ -1,5 +1,7 @@
 package models;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -7,7 +9,21 @@ public class Task {
     protected String description;
     protected int id;
     protected Status status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
 
     public String getTaskName() {
         return taskName;
@@ -43,7 +59,14 @@ public class Task {
 
     @Override
     public String toString() {
-        return "models.Task{" + "taskName='" + taskName + '\'' + ", description='" + description + '\'' + ", id=" + id + ", status=" + status + '}';
+        return "Task{" +
+                "taskName='" + taskName + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                ", duration=" + duration +
+                ", startTime=" + startTime +
+                '}';
     }
 
     @Override
@@ -59,10 +82,12 @@ public class Task {
         return Objects.hash(taskName, description, id, status);
     }
 
-    public Task(String taskName, String description, int id, Status status) {
+    public Task(String taskName, String description, int id, Status status, LocalDateTime startTime, Duration duration) {
         this.taskName = taskName;
         this.description = description;
         this.id = id;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 }

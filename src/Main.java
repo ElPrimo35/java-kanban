@@ -1,10 +1,13 @@
 import managers.FileBackedTaskManager;
+import managers.InMemoryTaskManager;
 import models.Epic;
 import models.Status;
 import models.Subtask;
 import models.Task;
 
-import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 
 
 public class Main {
@@ -12,43 +15,34 @@ public class Main {
     public static void main(String[] args) {
 
 
-        FileBackedTaskManager file = new FileBackedTaskManager("tasks.cvs");
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager("tasks.cvs");
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
 
-        Task firstTask = new Task("Уборка", "Убраться в доме", 1, Status.NEW);
-        int firstTaskId = file.createTask(firstTask);
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstTaskId = fileBackedTaskManager.createTask(task1);
 
-        Task secondTask = new Task("Сходить погулять", "Прийти в центр города", 2, Status.NEW);
-        int secondTaskId = file.createTask(secondTask);
+        Task task2 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int secondTaskId = fileBackedTaskManager.createTask(task2);
 
-        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
-        int firstEpicId = file.createEpic(epic);
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstEpicId = fileBackedTaskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
-        int firstSubtaskId = file.createSubtask(subtask);
+        Subtask subtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
+        int firstSubtaskId = fileBackedTaskManager.createSubtask(subtask);
 
-        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
-        int secondSubtaskId = file.createSubtask(subtask1);
+        System.out.println(fileBackedTaskManager.getTaskList());
+        System.out.println(fileBackedTaskManager.getEpicList());
+        System.out.println(fileBackedTaskManager.getSubtaskList());
+        //System.out.println(file1.getPrioritizedTasks());
 
-        Subtask subtask2 = new Subtask("Сдать ТЗ6", "Сделать тесты", 3, Status.NEW, epic.getId());
-        int thirdSubtaskId = file.createSubtask(subtask2);
-
-        Epic epic1 = new Epic("Сдать все зачёты", "подготовиться к ним", -1, Status.NEW);
-        int secondEpicId = file.createEpic(epic1);
-
-        Subtask subtask3 = new Subtask("Сдать ТЗ7", "Сделать тесты", 3, Status.NEW, epic1.getId());
-        int fourthSubtaskId = file.createSubtask(subtask3);
-
-        Subtask subtask4 = new Subtask("Сдать ТЗ7", "Сделать тесты", 3, Status.NEW, epic1.getId());
-        int fifthSubtaskId = file.createSubtask(subtask4);
-
-        System.out.println(file.getEpicList());
-        System.out.println(file.getSubtaskList());
-        System.out.println(file.getTaskList());
-        System.out.println();
-        FileBackedTaskManager file1 = FileBackedTaskManager.loadFromFile(Path.of("tasks.cvs").toFile());
-        System.out.println(file1.getEpicList());
-        System.out.println(file1.getSubtaskList());
-        System.out.println(file1.getTaskList());
     }
 }

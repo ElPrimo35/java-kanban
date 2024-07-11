@@ -1,5 +1,7 @@
 package managers;
 
+import exceptions.ManagerLoadException;
+import exceptions.ManagerSaveException;
 import models.Epic;
 import models.Status;
 import models.Subtask;
@@ -7,26 +9,53 @@ import models.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
+    @Override
+    protected FileBackedTaskManager createTaskManager() {
+        try {
+            return new FileBackedTaskManager(File.createTempFile("testDirectory", ".cvs").getName());
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+    }
+
     @Test
     void shouldSaveToFile() throws IOException {
-        File file = File.createTempFile("testDirectory", "taskTest.cvs");
+        File file = File.createTempFile("testDirectory1", ".cvs");
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file.getName());
 
-        Task firstTask = new Task("Уборка", "Убраться в доме", 1, Status.NEW);
-        int firstTaskId = fileBackedTaskManager.createTask(firstTask);
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstTaskId = fileBackedTaskManager.createTask(task1);
 
-        Task secondTask = new Task("Сходить погулять", "Прийти в центр города", 2, Status.NEW);
-        int secondTaskId = fileBackedTaskManager.createTask(secondTask);
+        Task task2 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int secondTaskId = fileBackedTaskManager.createTask(task2);
 
-        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int firstEpicId = fileBackedTaskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int firstSubtaskId = fileBackedTaskManager.createSubtask(subtask);
 
 
@@ -37,24 +66,32 @@ public class FileBackedTaskManagerTest {
             String line = br.readLine();
             finalLine = finalLine + line;
         }
-        Assertions.assertEquals(finalLine, "id,type,name,status,description,epic1,TASK,Уборка,NEW,Убраться в доме,2,TASK,Сходить погулять,NEW,Прийти в центр города,3,EPIC,Выучить джаву,NEW,Пройти курс от яндекса,4,SUBTASK,Сдать ТЗ4,NEW,Сделать тесты,3,");
+        Assertions.assertEquals(finalLine, "id,type,name,status,description,epic1,TASK,Уборка,NEW,Убраться в доме,1222-01-02T02:11,PT12H,2,TASK,Уборка,NEW,Убраться в доме,1222-01-02T02:11,PT12H,3,EPIC,Выучить джаву,NEW,Пройти курс от яндекса,1224-01-02T02:11,PT12H,4,SUBTASK,Сдать ТЗ4,NEW,Сделать тесты,3,1224-01-02T02:11,PT12H,");
     }
 
     @Test
     void shouldLoadFromFile() throws IOException {
-        File file = File.createTempFile("testDirectory", "taskTest.cvs");
+        File file = File.createTempFile("testDirectory2", ".cvs");
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file.getName());
 
-        Task firstTask = new Task("Уборка", "Убраться в доме", 1, Status.NEW);
-        int firstTaskId = fileBackedTaskManager.createTask(firstTask);
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstTaskId = fileBackedTaskManager.createTask(task1);
 
-        Task secondTask = new Task("Сходить погулять", "Прийти в центр города", 2, Status.NEW);
-        int secondTaskId = fileBackedTaskManager.createTask(secondTask);
+        Task task2 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int secondTaskId = fileBackedTaskManager.createTask(task2);
 
-        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int firstEpicId = fileBackedTaskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int firstSubtaskId = fileBackedTaskManager.createSubtask(subtask);
 
 
@@ -63,5 +100,19 @@ public class FileBackedTaskManagerTest {
         Assertions.assertEquals(fileBackedTaskManager.getTaskList(), file2.getTaskList());
         Assertions.assertEquals(fileBackedTaskManager.getEpicById(firstEpicId), file2.getEpicById(firstEpicId));
         Assertions.assertEquals(fileBackedTaskManager.getSubtaskList(), file2.getSubtaskList());
+    }
+
+    @Test
+    void shouldThrowExceptionOnLoad() {
+        assertThrows(ManagerLoadException.class, () -> FileBackedTaskManager.loadFromFile(new File("NotExistFile.csv")));
+    }
+
+    @Test
+    void shouldThrowExceptionOnSave() throws IOException {
+        Path directory = Files.createTempDirectory("SomeDirectory");
+
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(directory.toAbsolutePath().toString());
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        assertThrows(ManagerSaveException.class, () -> fileBackedTaskManager.createTask(task1));
     }
 }

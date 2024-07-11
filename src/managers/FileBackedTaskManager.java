@@ -5,6 +5,8 @@ import exceptions.ManagerSaveException;
 import models.*;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -26,6 +28,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             builder.append(task.getStatus());
             builder.append(',');
             builder.append(task.getDescription());
+            builder.append(",");
+            builder.append(task.getStartTime());
+            builder.append(",");
+            builder.append(task.getDuration());
+
             return builder.toString();
         }
         if (task instanceof Subtask) {
@@ -40,6 +47,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             builder.append(task.getDescription());
             builder.append(',');
             builder.append(((Subtask) task).getEpicId());
+            builder.append(",");
+            builder.append(task.getStartTime());
+            builder.append(",");
+            builder.append(task.getDuration());
             return builder.toString();
         }
         builder.append(task.getId());
@@ -51,6 +62,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         builder.append(task.getStatus());
         builder.append(',');
         builder.append(task.getDescription());
+        builder.append(",");
+        builder.append(task.getStartTime());
+        builder.append(",");
+        builder.append(task.getDuration());
         return builder.toString();
     }
 
@@ -66,35 +81,47 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         if (split[1].equals(typeSubtask)) {
             int epicID = Integer.parseInt(split[5]);
+            LocalDateTime startTime = LocalDateTime.parse(split[6]);
+            Duration duration = Duration.parse(split[7]);
             Subtask subtask1 = new Subtask(
                     name,
                     description,
                     id,
                     status,
-                    epicID
+                    epicID,
+                    startTime,
+                    duration
             );
             return subtask1;
         }
         if (split[1].equals(typeTask)) {
+            LocalDateTime startTime = LocalDateTime.parse(split[5]);
+            Duration duration = Duration.parse(split[6]);
             return new Task(
                     name,
                     description,
                     id,
-                    status
+                    status,
+                    startTime,
+                    duration
             );
         }
         if (split[1].equals(typeEpic)) {
+            LocalDateTime startTime = LocalDateTime.parse(split[5]);
+            Duration duration = Duration.parse(split[6]);
             return new Epic(
                     name,
                     description,
                     id,
-                    status
+                    status,
+                    startTime,
+                    duration
             );
         }
         return null;
     }
 
-    public void save() {
+    private void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
             bw.write("id,type,name,status,description,epic" + "\n");
             for (Task task : tasks.values()) {
@@ -128,7 +155,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (task == null) {
                     continue;
                 }
-
                 if (task instanceof Epic) {
                     fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
                     if (task.getId() > idCounter) idCounter = task.getId();
@@ -148,6 +174,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         fileBackedTaskManager.nextId = idCounter;
         return fileBackedTaskManager;
+    }
+
+
+    @Override
+    protected void changeEpicStatus(Epic epic) {
+        super.changeEpicStatus(epic);
+    }
+
+    @Override
+    protected LocalDateTime getEpicStartTime(Epic epic) {
+        return super.getEpicStartTime(epic);
+    }
+
+    @Override
+    protected Duration getEpicDuration(Epic epic) {
+        return super.getEpicDuration(epic);
+    }
+
+    @Override
+    protected LocalDateTime getEpicEndTime(Epic epic) {
+        return super.getEpicEndTime(epic);
     }
 
     @Override

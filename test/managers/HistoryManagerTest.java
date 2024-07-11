@@ -7,31 +7,22 @@ import models.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryManagerTest {
     @Test
     void shouldNotUpdateInHistory() {
-        TaskManager taskManger = Managers.getDefault();
-        int taskId = taskManger.createTask(
-                new Task(
-                        "d",
-                        "d",
-                        2,
-                        Status.NEW
-                )
-        );
-        taskManger.getTaskById(taskId);
-        taskManger.updateTask(
-                new Task(
-                        "v",
-                        "v",
-                        taskId,
-                        Status.NEW
-                )
-        );
-        List<Task> testList = taskManger.getHistory();
+        TaskManager taskManager = Managers.getDefault();
+        Task task = new Task("d", "d", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int taskId = taskManager.createTask(task);
+        taskManager.getTaskById(taskId);
+        taskManager.updateTask(task);
+
+        List<Task> testList = taskManager.getHistory();
         Assertions.assertEquals("d", testList.get(0).getTaskName());
         Assertions.assertEquals("d", testList.get(0).getDescription());
         Assertions.assertEquals(taskId, testList.get(0).getId());
@@ -41,25 +32,15 @@ public class HistoryManagerTest {
 
     @Test
     void shouldReturnHistory() {
-        TaskManager taskManger = Managers.getDefault();
+        TaskManager taskManager = Managers.getDefault();
         List<Task> tasks = new ArrayList<>();
 
-        Task task = new Task(
-                "d",
-                "d",
-                2,
-                Status.NEW
-        );
-        taskManger.createTask(task);
+        Task task = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstTaskId = taskManager.createTask(task);
 
 
-        Epic epic = new Epic(
-                "Выучить джаву",
-                "Пройти курс от яндекса",
-                -1,
-                Status.NEW
-        );
-        taskManger.createEpic(epic);
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstEpicId = taskManager.createEpic(epic);
 
 
         Subtask subtask = new Subtask(
@@ -67,49 +48,34 @@ public class HistoryManagerTest {
                 "Сделать тесты",
                 3,
                 Status.NEW,
-                epic.getId()
-        );
-        taskManger.createSubtask(subtask);
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12));
+        int subtaskId = taskManager.createSubtask(subtask);
 
-
-        taskManger.getTaskById(task.getId());
-        taskManger.getEpicById(epic.getId());
-        taskManger.getSubtaskById(subtask.getId());
+        taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
+        taskManager.getSubtaskById(subtask.getId());
 
         tasks.add(task);
         tasks.add(epic);
         tasks.add(subtask);
 
-        Assertions.assertEquals(tasks, taskManger.getHistory());
+        Assertions.assertEquals(tasks, taskManager.getHistory());
     }
 
     @Test
     void shouldAddAndDelete() {
         List<Task> tasks = new ArrayList<>();
         TaskManager taskManager = Managers.getDefault();
-        Task firstTask = new Task(
-                "Уборка",
-                "Убраться в доме",
-                1,
-                Status.NEW
-        );
-        int firstTaskId = taskManager.createTask(firstTask);
+        Task task = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstTaskId = taskManager.createTask(task);
 
 
-        Task secondTask = new Task(
-                "Сходить погулять",
-                "Прийти в центр города",
-                2,
-                Status.NEW
-        );
-        int secondTaskId = taskManager.createTask(secondTask);
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int secondTaskId = taskManager.createTask(task);
 
-        Epic epic = new Epic(
-                "Выучить джаву",
-                "Пройти курс от яндекса",
-                -1,
-                Status.NEW
-        );
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int firstEpicId = taskManager.createEpic(epic);
 
         Subtask subtask = new Subtask(
@@ -117,25 +83,26 @@ public class HistoryManagerTest {
                 "Сделать тесты",
                 3,
                 Status.NEW,
-                epic.getId()
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
         );
         int subtaskId = taskManager.createSubtask(subtask);
 
-
         InMemoryHistoryManager history = new InMemoryHistoryManager();
 
-        history.addTask(firstTask);
-        history.addTask(secondTask);
-        history.addTask(firstTask);
-        history.addTask(secondTask);
+        history.addTask(task);
+        history.addTask(task1);
+        history.addTask(task);
+        history.addTask(task1);
         history.addTask(epic);
         history.addTask(subtask);
         history.addTask(epic);
         history.addTask(subtask);
 
 
-        tasks.add(firstTask);
-        tasks.add(secondTask);
+        tasks.add(task);
+        tasks.add(task1);
         tasks.add(epic);
         tasks.add(subtask);
 
@@ -147,17 +114,17 @@ public class HistoryManagerTest {
         List<Task> tasks = new ArrayList<>();
         TaskManager taskManager = Managers.getDefault();
 
-        Task firstTask = new Task("Уборка", "Убраться в доме", 1, Status.NEW);
-        int firstTaskId = taskManager.createTask(firstTask);
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int secondTaskId = taskManager.createTask(task1);
 
-        Task secondTask = new Task("Сходить погулять", "Прийти в центр города", 2, Status.NEW);
-        int secondTaskId = taskManager.createTask(secondTask);
+        Task task = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstTaskId = taskManager.createTask(task);
 
         taskManager.getTaskById(firstTaskId);
         taskManager.getTaskById(secondTaskId);
         taskManager.deleteTaskById(firstTaskId);
 
-        tasks.add(secondTask);
+        tasks.add(task1);
 
         Assertions.assertEquals(tasks, taskManager.getHistory());
     }
@@ -167,11 +134,11 @@ public class HistoryManagerTest {
         List<Task> tasks = new ArrayList<>();
         TaskManager taskManager = Managers.getDefault();
 
-        Task firstTask = new Task("Уборка", "Убраться в доме", 1, Status.NEW);
-        int firstTaskId = taskManager.createTask(firstTask);
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int secondTaskId = taskManager.createTask(task1);
 
-        Task secondTask = new Task("Сходить погулять", "Прийти в центр города", 2, Status.NEW);
-        int secondTaskId = taskManager.createTask(secondTask);
+        Task task = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstTaskId = taskManager.createTask(task);
 
         taskManager.getTaskById(firstTaskId);
         taskManager.getTaskById(secondTaskId);
@@ -186,15 +153,29 @@ public class HistoryManagerTest {
         List<Task> tasks = new ArrayList<>();
         TaskManager taskManager = Managers.getDefault();
 
-        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int firstEpicId = taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int firstSubtaskId = taskManager.createSubtask(subtask);
-
-        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask1 = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int secondSubtaskId = taskManager.createSubtask(subtask1);
-
         taskManager.getEpicById(firstEpicId);
         taskManager.getSubtaskById(firstSubtaskId);
         taskManager.getSubtaskById(secondSubtaskId);
@@ -211,13 +192,28 @@ public class HistoryManagerTest {
         List<Task> tasks = new ArrayList<>();
         TaskManager taskManager = Managers.getDefault();
 
-        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int firstEpicId = taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int firstSubtaskId = taskManager.createSubtask(subtask);
-
-        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask1 = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int secondSubtaskId = taskManager.createSubtask(subtask1);
 
         taskManager.getEpicById(firstEpicId);
@@ -235,19 +231,42 @@ public class HistoryManagerTest {
         List<Task> tasks = new ArrayList<>();
         TaskManager taskManager = Managers.getDefault();
 
-        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int firstEpicId = taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int firstSubtaskId = taskManager.createSubtask(subtask);
-
-        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask1 = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int secondSubtaskId = taskManager.createSubtask(subtask1);
 
-        Epic epic1 = new Epic("Сдать все зачёты", "подготовиться к ним", -1, Status.NEW);
+        Epic epic1 = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int secondEpicId = taskManager.createEpic(epic1);
 
-        Subtask subtask2 = new Subtask("Сдать ТЗ7", "Сделать тесты", 3, Status.NEW, epic1.getId());
+        Subtask subtask2 = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                secondEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int thirdSubtaskId = taskManager.createSubtask(subtask2);
 
         taskManager.getEpicById(firstEpicId);
@@ -269,19 +288,43 @@ public class HistoryManagerTest {
         List<Task> tasks = new ArrayList<>();
         TaskManager taskManager = Managers.getDefault();
 
-        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW);
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int firstEpicId = taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Сдать ТЗ4", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int firstSubtaskId = taskManager.createSubtask(subtask);
 
-        Subtask subtask1 = new Subtask("Сдать ТЗ5", "Сделать тесты", 3, Status.NEW, epic.getId());
+        Subtask subtask1 = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int secondSubtaskId = taskManager.createSubtask(subtask1);
 
-        Epic epic1 = new Epic("Сдать все зачёты", "подготовиться к ним", -1, Status.NEW);
+        Epic epic1 = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
         int secondEpicId = taskManager.createEpic(epic1);
 
-        Subtask subtask2 = new Subtask("Сдать ТЗ7", "Сделать тесты", 3, Status.NEW, epic1.getId());
+        Subtask subtask2 = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
         int thirdSubtaskId = taskManager.createSubtask(subtask2);
 
         taskManager.getEpicById(firstEpicId);
