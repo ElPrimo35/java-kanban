@@ -250,7 +250,7 @@ public class HistoryManagerTest {
                 3,
                 Status.NEW,
                 firstEpicId,
-                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                LocalDateTime.of(1225, Month.JANUARY, 2, 2, 11),
                 Duration.ofHours(12)
         );
         int secondSubtaskId = taskManager.createSubtask(subtask1);
@@ -264,7 +264,7 @@ public class HistoryManagerTest {
                 3,
                 Status.NEW,
                 secondEpicId,
-                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                LocalDateTime.of(1226, Month.JANUARY, 2, 2, 11),
                 Duration.ofHours(12)
         );
         int thirdSubtaskId = taskManager.createSubtask(subtask2);

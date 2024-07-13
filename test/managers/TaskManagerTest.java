@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
     protected abstract T createTaskManager();
@@ -41,6 +43,52 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     }
 
+    @Test
+    void shouldDeleteFromPrioritizedTasks() {
+        TaskManager taskManager = createTaskManager();
+        Task task = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int taskId = taskManager.createTask(task);
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1223, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int task1Id = taskManager.createTask(task1);
+
+        Epic epic = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int firstEpicId = taskManager.createEpic(epic);
+
+        Subtask firstSubtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1225, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
+        int firstSubtaskId = taskManager.createSubtask(firstSubtask);
+
+        Subtask secondSubtask = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                firstEpicId,
+                LocalDateTime.of(1226, Month.JANUARY, 2, 2, 11),
+                Duration.ofHours(12)
+        );
+        int secondSubtaskId = taskManager.createSubtask(secondSubtask);
+
+        Epic epic1 = new Epic("Выучить джаву", "Пройти курс от яндекса", -1, Status.NEW, LocalDateTime.of(1227, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int epic1Id = taskManager.createEpic(epic1);
+        List<Task> testTaskList = new ArrayList<>();
+        testTaskList.add(task1);
+        testTaskList.add(secondSubtask);
+
+
+        taskManager.deleteTaskById(taskId);
+        taskManager.deleteSubtaskById(firstSubtaskId);
+        taskManager.deleteEpicById(epic1Id);
+
+        Assertions.assertEquals(testTaskList, taskManager.getPrioritizedTasks());
+    }
 
     @Test
     void shouldAddTasks() {
@@ -144,7 +192,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 3,
                 Status.DONE,
                 firstEpicId,
-                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                LocalDateTime.of(1225, Month.JANUARY, 2, 2, 11),
                 Duration.ofHours(12)
         );
         int secondSubtaskId = taskManager.createSubtask(secondSubtask);
@@ -159,7 +207,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 3,
                 Status.NEW,
                 secondEpicId,
-                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                LocalDateTime.of(1226, Month.JANUARY, 2, 2, 11),
                 Duration.ofHours(12)
         );
         int thirdSubtaskId = taskManager.createSubtask(thirdSubtask);
@@ -169,7 +217,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 3,
                 Status.DONE,
                 secondEpicId,
-                LocalDateTime.of(1224, Month.JANUARY, 2, 2, 11),
+                LocalDateTime.of(1227, Month.JANUARY, 2, 2, 11),
                 Duration.ofHours(12)
         );
         int fourthSubtaskId = taskManager.createSubtask(fourthSubtask);

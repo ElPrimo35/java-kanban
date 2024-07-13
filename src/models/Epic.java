@@ -18,6 +18,19 @@ public class Epic extends Task {
         return subtaskIds;
     }
 
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

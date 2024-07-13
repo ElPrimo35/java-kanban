@@ -7,6 +7,7 @@ import models.*;
 import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -16,7 +17,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.fileName = fileName;
     }
 
-    public String taskToString(Task task) {
+    protected String taskToString(Task task) {
         StringBuilder builder = new StringBuilder();
         if (task instanceof Epic) {
             builder.append(task.getId());
@@ -123,7 +124,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
-            bw.write("id,type,name,status,description,epic" + "\n");
+            bw.write("id,type,name,status,description,epic,startTime,Duration" + "\n");
             for (Task task : tasks.values()) {
                 String taskFile = taskToString(task);
                 bw.write(taskFile + "," + "\n");
@@ -157,16 +158,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
                 if (task instanceof Epic) {
                     fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
+                    ((Epic) task).setEndTime(task.getStartTime().plus(task.getDuration()));
                     if (task.getId() > idCounter) idCounter = task.getId();
                     continue;
                 }
                 if (task instanceof Subtask) {
                     fileBackedTaskManager.subtasks.put(task.getId(), (Subtask) task);
                     fileBackedTaskManager.epics.get(((Subtask) task).getEpicId()).getSubtaskIds().add(task.getId());
+                    fileBackedTaskManager.prioritizedTasks.add(task);
                     if (task.getId() > idCounter) idCounter = task.getId();
                     continue;
                 }
                 fileBackedTaskManager.tasks.put(task.getId(), task);
+                fileBackedTaskManager.prioritizedTasks.add(task);
                 if (task.getId() > idCounter) idCounter = task.getId();
             }
         } catch (IOException e) {
@@ -176,25 +180,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return fileBackedTaskManager;
     }
 
-
     @Override
-    protected void changeEpicStatus(Epic epic) {
-        super.changeEpicStatus(epic);
-    }
-
-    @Override
-    protected LocalDateTime getEpicStartTime(Epic epic) {
-        return super.getEpicStartTime(epic);
-    }
-
-    @Override
-    protected Duration getEpicDuration(Epic epic) {
-        return super.getEpicDuration(epic);
-    }
-
-    @Override
-    protected LocalDateTime getEpicEndTime(Epic epic) {
-        return super.getEpicEndTime(epic);
+    public List<Task> getPrioritizedTasks() {
+        return super.getPrioritizedTasks();
     }
 
     @Override
