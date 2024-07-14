@@ -5,7 +5,6 @@ import models.Subtask;
 import models.Task;
 
 import java.nio.file.Path;
-import java.sql.SQLOutput;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -80,10 +79,10 @@ public class Main {
 
         FileBackedTaskManager fileBackedTaskManager1 = FileBackedTaskManager.loadFromFile(Path.of("tasks.cvs").toFile());
 
-//        System.out.println(fileBackedTaskManager.getEpicById(epic1Id).getStartTime());
-//        System.out.println(fileBackedTaskManager.getEpicById(epic1Id).getEndTime());
-//        System.out.println(fileBackedTaskManager1.getEpicById(epic1Id).getStartTime());
-//        System.out.println(fileBackedTaskManager1.getEpicById(epic1Id).getEndTime());
+        System.out.println(fileBackedTaskManager.getEpicById(epic1Id).getStartTime());
+        System.out.println(fileBackedTaskManager.getEpicById(epic1Id).getEndTime());
+        System.out.println(fileBackedTaskManager1.getEpicById(epic1Id).getStartTime());
+        System.out.println(fileBackedTaskManager1.getEpicById(epic1Id).getEndTime());
 
         System.out.println(fileBackedTaskManager1.getTaskList());
         System.out.println(fileBackedTaskManager1.getPrioritizedTasks());
