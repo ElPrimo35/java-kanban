@@ -5,6 +5,7 @@ import models.Subtask;
 import models.Task;
 
 import java.nio.file.Path;
+import java.sql.SQLOutput;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -48,16 +49,45 @@ public class Main {
                 3,
                 Status.NEW,
                 epic1Id,
-                LocalDateTime.of(1225, Month.JANUARY, 2, 2, 11),
+                LocalDateTime.of(1225, Month.JANUARY, 1, 1, 1),
                 Duration.ofHours(12)
         );
         int subtask1Id = fileBackedTaskManager.createSubtask(subtask1);
 
-        FileBackedTaskManager fileBackedTaskManager1 = FileBackedTaskManager.loadFromFile(Path.of("tasks.cvs").toFile());
-        System.out.println();
 
-        //System.out.println(file1.getPrioritizedTasks());
-        System.out.println(fileBackedTaskManager.getTaskList());
+        Subtask subtask2 = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                epic1Id,
+                LocalDateTime.of(1226, Month.JANUARY, 1, 1, 1),
+                Duration.ofHours(12)
+        );
+        int subtask2Id = fileBackedTaskManager.createSubtask(subtask2);
+
+        Subtask subtask3 = new Subtask(
+                "Сдать ТЗ4",
+                "Сделать тесты",
+                3,
+                Status.NEW,
+                epic1Id,
+                LocalDateTime.of(1227, Month.JANUARY, 1, 1, 1),
+                Duration.ofHours(12)
+        );
+        int subtask3Id = fileBackedTaskManager.createSubtask(subtask3);
+
+
+        FileBackedTaskManager fileBackedTaskManager1 = FileBackedTaskManager.loadFromFile(Path.of("tasks.cvs").toFile());
+
+//        System.out.println(fileBackedTaskManager.getEpicById(epic1Id).getStartTime());
+//        System.out.println(fileBackedTaskManager.getEpicById(epic1Id).getEndTime());
+//        System.out.println(fileBackedTaskManager1.getEpicById(epic1Id).getStartTime());
+//        System.out.println(fileBackedTaskManager1.getEpicById(epic1Id).getEndTime());
+
+        System.out.println(fileBackedTaskManager1.getTaskList());
+        System.out.println(fileBackedTaskManager1.getPrioritizedTasks());
+
 
     }
 }

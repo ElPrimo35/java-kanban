@@ -70,7 +70,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return builder.toString();
     }
 
-    public static Task fromString(String value) {
+    private Task fromString(String value) {
         String[] split = value.split(",");
         String typeTask = TaskType.TASK.toString();
         String typeEpic = TaskType.EPIC.toString();
@@ -152,13 +152,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             br.readLine();
             while (br.ready()) {
                 String line = br.readLine();
-                Task task = fromString(line);
+                Task task = fileBackedTaskManager.fromString(line);
                 if (task == null) {
                     continue;
                 }
                 if (task instanceof Epic) {
                     fileBackedTaskManager.epics.put(task.getId(), (Epic) task);
-                    ((Epic) task).setEndTime(task.getStartTime().plus(task.getDuration()));
+
+
                     if (task.getId() > idCounter) idCounter = task.getId();
                     continue;
                 }
@@ -177,6 +178,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerLoadException("Ошибка при выгрузке файлов.", e);
         }
         fileBackedTaskManager.nextId = idCounter;
+        for (Epic epic : fileBackedTaskManager.getEpicList()) {
+            fileBackedTaskManager.setEpicTime(epic);
+        }
         return fileBackedTaskManager;
     }
 

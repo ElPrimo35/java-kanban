@@ -42,6 +42,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(firstSubtask.getId(), subtask.getId());
 
     }
+    @Test
+    void shouldNotAddIfCrossed() {
+        TaskManager taskManager = createTaskManager();
+        List<Task> testList = new ArrayList<>();
+        Task task = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int taskId = taskManager.createTask(task);
+        Task task1 = new Task("Уборка", "Убраться в доме", 1, Status.NEW, LocalDateTime.of(1222, Month.JANUARY, 2, 2, 11), Duration.ofHours(12));
+        int task1Id = taskManager.createTask(task1);
+        testList.add(task);
+        Assertions.assertEquals(testList, taskManager.getPrioritizedTasks());
+    }
 
     @Test
     void shouldDeleteFromPrioritizedTasks() {

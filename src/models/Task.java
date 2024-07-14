@@ -11,6 +11,7 @@ public class Task {
     protected Status status;
     protected Duration duration;
     protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
 
 
     public LocalDateTime getEndTime() {
@@ -19,6 +20,17 @@ public class Task {
 
     public Duration getDuration() {
         return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public LocalDateTime getStartTime() {
