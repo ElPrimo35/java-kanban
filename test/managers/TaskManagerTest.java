@@ -42,6 +42,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(firstSubtask.getId(), subtask.getId());
 
     }
+
     @Test
     void shouldNotAddIfCrossed() {
         TaskManager taskManager = createTaskManager();

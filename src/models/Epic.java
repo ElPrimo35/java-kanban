@@ -9,7 +9,6 @@ public class Epic extends Task {
     protected ArrayList<Integer> subtaskIds = new ArrayList<>();
 
 
-
     public LocalDateTime getEndTime() {
         return endTime;
     }
