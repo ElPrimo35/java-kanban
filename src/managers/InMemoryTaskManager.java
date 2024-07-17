@@ -99,27 +99,19 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         LocalDateTime epicStartTime = epicSubtasks.getFirst().getStartTime();
-        if (!subtasks.isEmpty()) {
-            for (Subtask subtask : epicSubtasks) {
-                if (epicStartTime.isAfter(subtask.getStartTime())) {
-                    epicStartTime = subtask.getStartTime();
-                }
-            }
-        }
-        epic.setStartTime(epicStartTime);
-
         Duration duration = Duration.ZERO;
-        for (Subtask subtask : epicSubtasks) {
-            duration = duration.plus(subtask.getDuration());
-        }
-        epic.setDuration(duration);
-
         LocalDateTime epicEndTime = epicSubtasks.getFirst().getEndTime();
         for (Subtask subtask : epicSubtasks) {
+            if (epicStartTime.isAfter(subtask.getStartTime())) {
+                epicStartTime = subtask.getStartTime();
+            }
             if (epicEndTime.isBefore(subtask.getEndTime())) {
                 epicEndTime = subtask.getEndTime();
             }
+            duration = duration.plus(subtask.getDuration());
         }
+        epic.setStartTime(epicStartTime);
+        epic.setDuration(duration);
         epic.setEndTime(epicEndTime);
     }
 
