@@ -1,4 +1,4 @@
-package httpServer;
+package http;
 
 import adapters.DurationAdapter;
 import adapters.LocalDateTimeAdapter;
