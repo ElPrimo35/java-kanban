@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class EpicsHandler extends BaseHttpHandler {
     public EpicsHandler(InMemoryTaskManager inMemoryTaskManager, Gson gson) {
-        super(inMemoryTaskManager, gson);
+        super(inMemoryTaskManager);
     }
 
     @Override
@@ -19,6 +19,9 @@ public class EpicsHandler extends BaseHttpHandler {
             case "POST":
                 String path = httpExchange.getRequestURI().getPath();
                 String requestBody = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                if (requestBody.isEmpty()) {
+                    sendBadRequest(httpExchange);
+                }
                 Epic newEpic = gson.fromJson(requestBody, Epic.class);
                 if (path.split("/").length == 3) {
                     inMemoryTaskManager.updateEpic(newEpic);

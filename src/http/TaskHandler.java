@@ -12,7 +12,7 @@ public class TaskHandler extends BaseHttpHandler {
 
 
     public TaskHandler(InMemoryTaskManager inMemoryTaskManager, Gson gson) {
-        super(inMemoryTaskManager, gson);
+        super(inMemoryTaskManager);
     }
 
     @Override
@@ -21,6 +21,9 @@ public class TaskHandler extends BaseHttpHandler {
             case "POST":
                 String path = httpExchange.getRequestURI().getPath();
                 String requestBody = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                if (requestBody.isEmpty()) {
+                    sendBadRequest(httpExchange);
+                }
                 Task newTask = gson.fromJson(requestBody, Task.class);
                 if (path.split("/").length == 3) {
                     inMemoryTaskManager.updateTask(newTask);

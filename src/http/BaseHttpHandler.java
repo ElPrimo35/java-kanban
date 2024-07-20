@@ -1,6 +1,9 @@
 package http;
 
+import adapters.DurationAdapter;
+import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.InMemoryTaskManager;
@@ -9,14 +12,38 @@ import responsers.ErrorResponse;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public abstract class BaseHttpHandler implements HttpHandler {
     protected final InMemoryTaskManager inMemoryTaskManager;
-    protected final Gson gson;
+    protected final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .registerTypeAdapter(Duration.class, new DurationAdapter())
+            .create();
 
-    public BaseHttpHandler(InMemoryTaskManager inMemoryTaskManager, Gson gson) {
+    public BaseHttpHandler(InMemoryTaskManager inMemoryTaskManager) {
         this.inMemoryTaskManager = inMemoryTaskManager;
-        this.gson = gson;
+    }
+
+    protected void sendWrongMethod(HttpExchange h) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse("неправильный метод");
+        String responseJson = gson.toJson(errorResponse);
+        byte[] resp = responseJson.getBytes(StandardCharsets.UTF_8);
+        h.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+        h.sendResponseHeaders(405, resp.length);
+        h.getResponseBody().write(resp);
+        h.close();
+    }
+
+    protected void sendBadRequest(HttpExchange h) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse("тело запроса пустое");
+        String responseJson = gson.toJson(errorResponse);
+        byte[] resp = responseJson.getBytes(StandardCharsets.UTF_8);
+        h.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+        h.sendResponseHeaders(404, resp.length);
+        h.getResponseBody().write(resp);
+        h.close();
     }
 
     protected void sendText(HttpExchange h, Object body, int code) throws IOException {

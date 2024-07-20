@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class SubtasksHandler extends BaseHttpHandler {
     public SubtasksHandler(InMemoryTaskManager inMemoryTaskManager, Gson gson) {
-        super(inMemoryTaskManager, gson);
+        super(inMemoryTaskManager);
     }
 
     @Override
@@ -19,6 +19,9 @@ public class SubtasksHandler extends BaseHttpHandler {
             case "POST":
                 String path = httpExchange.getRequestURI().getPath();
                 String requestBody = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                if (requestBody.isEmpty()) {
+                    sendBadRequest(httpExchange);
+                }
                 Subtask newSubtask = gson.fromJson(requestBody, Subtask.class);
                 if (path.split("/").length == 3) {
                     inMemoryTaskManager.updateSubtask(newSubtask);
